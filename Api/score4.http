@@ -1,0 +1,6 @@
+@score4_HostAddress = http://localhost:5278
+
+GET {{score4_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
