@@ -1,12 +1,4 @@
-﻿namespace Game.Board;
-
-public enum BoardStatus
-{
-    InProgress = 0,
-    RedWon = 1,
-    BlueWon = 2,
-    Draw = 3
-}
+﻿namespace Domain.Game.Items;
 
 public class Board
 {
@@ -28,11 +20,6 @@ public class Board
         }
     }
 
-    public CellValue GetCellValue(int x, int y)
-    {
-        return _cells[x, y].Value;
-    }
-
     public int SetCellValue(int column, CellValue cellValue)
     {
         var cellYPosition = 0;
@@ -48,21 +35,6 @@ public class Board
         
         _cells[cellYPosition, column].Value = cellValue;
         return cellYPosition;
-    }
-
-    public BoardStatus CheckBoardStatus()
-    {
-        if (IsWinner(CellValue.Red))
-        {
-            return BoardStatus.RedWon;
-        }
-        
-        if (IsWinner(CellValue.Blue))
-        {
-            return BoardStatus.BlueWon;
-        }
-    
-        return AnyCellEmpty() ? BoardStatus.InProgress : BoardStatus.Draw;
     }
 
     public void PrintBoard()
@@ -90,7 +62,7 @@ public class Board
         }
     }
 
-    private bool IsWinner(CellValue cellValue)
+    public bool Has4Consecutive(CellValue cellValue)
     {
         for (int line = 0; line < Rows; line++)
         {
@@ -114,6 +86,27 @@ public class Board
         }
         
         return false;
+    }
+    
+    public bool AnyCellEmpty()
+    {
+        for (int i = 0; i < Rows; i++)
+        {
+            for (int j = 0; j < Cols; j++)
+            {
+                if (_cells[i, j].Value == CellValue.Empty)
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private CellValue GetCellValue(int x, int y)
+    {
+        return _cells[x, y].Value;
     }
     
     private bool ConsecutiveFourHorizontal(int line, CellValue cellValue)
@@ -153,7 +146,7 @@ public class Board
         return false;
     }
     
-    bool ConsecutiveFourInDiagonals(CellValue cellValue)
+    private bool ConsecutiveFourInDiagonals(CellValue cellValue)
     {
         for (int r = 0; r <= Rows - 4; r++)
         {
@@ -183,22 +176,6 @@ public class Board
             }
         }
 
-        return false;
-    }
-
-    private bool AnyCellEmpty()
-    {
-        for (int i = 0; i < Rows; i++)
-        {
-            for (int j = 0; j < Cols; j++)
-            {
-                if (_cells[i, j].Value == CellValue.Empty)
-                {
-                    return true;
-                }
-            }
-        }
-        
         return false;
     }
 }

@@ -1,12 +1,34 @@
-﻿using Game.Board;
-
-Board board = new();
+﻿using Domain.Game;
+using Domain.Game.Items;
 
 int selection;
-BoardStatus boardStatus = BoardStatus.InProgress;
-CellValue cellValue = CellValue.Red;
+GameSession gameSession = new GameSession
+{
+    SessionId = "1",
+};
+
+gameSession.Join(
+    new Player
+    {
+        Id = "1",
+        Name = "Geo"
+    }
+);
+
+gameSession.Join(
+    new Player
+    {
+        Id = "2",
+        Name = "Jo"
+    }
+);
+
+GameStatus gameStatus = gameSession.CheckGameStatus();
+
 do
 {
+    gameSession.PrintBoard();
+    Console.WriteLine($"Payer playing: {gameSession.GetPlayerPlaying()?.Name}");
     Console.WriteLine($"To insert value to a cell press: 1");
     Console.WriteLine($"Press any other key to exit");
     if (!int.TryParse(Console.ReadLine(), out selection))
@@ -28,17 +50,16 @@ do
                 Console.WriteLine($"Value must be a number between 0 and {Board.Cols - 1}");
             }
         } while (column is < 0 or >= Board.Cols);
-        int cellYPosition = board.SetCellValue(column, cellValue);
+        int cellYPosition = gameSession.SetCellValue(column);
         if (cellYPosition is -1)
         {
             Console.WriteLine("Column is full, could not add insert value to a cell");
         }
-        board.PrintBoard();
-
-        boardStatus = board.CheckBoardStatus();
-        Console.WriteLine($"Status: {nameof(boardStatus)}: {boardStatus})");
-        cellValue = cellValue == CellValue.Red ? CellValue.Blue :  CellValue.Red;
+        
+        gameStatus = gameSession.CheckGameStatus();
+        Console.WriteLine($"Status: {nameof(gameStatus)}: {gameStatus}");
     }
-} while (selection == 1 && BoardStatus.InProgress == boardStatus);
+} while (selection == 1 && GameStatus.InProgress == gameStatus);
 
-Console.WriteLine($"Exiting...");
+gameSession.PrintBoard();
+Console.WriteLine("Exiting...");
