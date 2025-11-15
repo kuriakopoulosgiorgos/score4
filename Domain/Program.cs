@@ -9,21 +9,25 @@ GameSession gameSession = new GameSession
 
 gameSession.Join(
     new Player
-    {
-        Id = "1",
-        Name = "Geo"
-    }
+    (
+        Id: "1",
+        Name: "Geo"
+    )
 );
 
 gameSession.Join(
     new Player
-    {
-        Id = "2",
-        Name = "Jo"
-    }
+    (
+        Id: "2",
+        Name: "Jo"
+    )
 );
 
-GameStatus gameStatus = gameSession.CheckGameStatus();
+BoardStatus boardStatus = new BoardStatus
+{
+    Cells = new Cell[1, 1],
+    Status = Status.InProgress
+};
 
 do
 {
@@ -50,16 +54,21 @@ do
                 Console.WriteLine($"Value must be a number between 0 and {Board.Cols - 1}");
             }
         } while (column is < 0 or >= Board.Cols);
-        int cellYPosition = gameSession.SetCellValue(column);
-        if (cellYPosition is -1)
+
+        try
         {
-            Console.WriteLine("Column is full, could not add insert value to a cell");
+            boardStatus = gameSession.PlaceCell(column);
+            Console.WriteLine($"Status: {nameof(boardStatus.Status)}: {boardStatus.Status}");
+        }
+        catch (GameException e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
         
-        gameStatus = gameSession.CheckGameStatus();
-        Console.WriteLine($"Status: {nameof(gameStatus)}: {gameStatus}");
+        
     }
-} while (selection == 1 && GameStatus.InProgress == gameStatus);
+} while (selection == 1 && Status.InProgress == boardStatus.Status);
 
 gameSession.PrintBoard();
 Console.WriteLine("Exiting...");

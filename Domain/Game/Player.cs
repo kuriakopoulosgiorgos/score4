@@ -1,7 +1,3 @@
 ﻿namespace Domain.Game;
 
-public class Player
-{
-    public required string Id { get; init; }
-    public required string Name { get; init; }
-}
+public record Player(string Id, string Name);

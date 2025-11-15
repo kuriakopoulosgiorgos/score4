@@ -2,15 +2,6 @@
 
 namespace Domain.Game;
 
-public enum GameStatus
-{
-    NotStarted = 0,
-    InProgress = 1,
-    Player1Won = 2,
-    Player2Won = 3,
-    Draw = 4
-}
-
 public class GameSession
 {
     public required string SessionId { get; init; }
@@ -23,7 +14,7 @@ public class GameSession
     {
         if (Player1 is not null && Player2 is not null)
         {
-            return;
+            throw new GameException("Game session is full");
         }
 
         if (Player1 is null)
@@ -40,44 +31,21 @@ public class GameSession
     {
         _board.PrintBoard();
     }
-    
-    public GameStatus CheckGameStatus()
-    {
-        if (_playerPlaying is null)
-        {
-            return GameStatus.NotStarted;
-        }
-        
-        if (_board.Has4Consecutive(CellValue.Red))
-        {
-            return GameStatus.Player1Won;
-        }
-        
-        if (_board.Has4Consecutive(CellValue.Blue))
-        {
-            return GameStatus.Player2Won;
-        }
-    
-        return _board.AnyCellEmpty() ? GameStatus.InProgress : GameStatus.Draw;
-    }
 
     public Player? GetPlayerPlaying()
     {
         return _playerPlaying;
     }
 
-    public int SetCellValue(int column)
+    public BoardStatus PlaceCell(int column)
     {
-        if (CheckGameStatus()  == GameStatus.NotStarted)
+        if (_playerPlaying is null)
         {
             throw new GameException("Game is not started");
         }
         
-        int cellYPosition = _board.SetCellValue(column, _playerPlaying?.Id == Player1?.Id ? CellValue.Red : CellValue.Blue);
-        if (cellYPosition is not -1)
-        {
-            _playerPlaying = _playerPlaying?.Id == Player1?.Id ? Player2 : Player1;
-        }
-        return cellYPosition;
+        BoardStatus boardStatus = _board.PlaceCell(column, _playerPlaying?.Id == Player1?.Id ? CellValue.Red : CellValue.Blue);
+        _playerPlaying = _playerPlaying?.Id == Player1?.Id ? Player2 : Player1;
+        return boardStatus;
     }
 }

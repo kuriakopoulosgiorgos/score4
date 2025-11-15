@@ -3,7 +3,8 @@
 public class Board
 {
     public const int Rows = 6, Cols = 7;
-    
+
+    private Cell[,] Cells => _cells.Clone() as Cell[,] ?? new Cell[Rows, Cols];
     private readonly Cell[,] _cells = new Cell[Rows, Cols];
 
     public Board()
@@ -20,7 +21,7 @@ public class Board
         }
     }
 
-    public int SetCellValue(int column, CellValue cellValue)
+    public BoardStatus PlaceCell(int column, CellValue cellValue)
     {
         var cellYPosition = 0;
         while (cellYPosition < Rows && GetCellValue(cellYPosition, column) != CellValue.Empty)
@@ -30,11 +31,11 @@ public class Board
 
         if (cellYPosition >= Rows)
         {
-            return -1;
+            throw new GameException("Column is full");
         }
         
         _cells[cellYPosition, column].Value = cellValue;
-        return cellYPosition;
+        return CheckStatus();
     }
 
     public void PrintBoard()
@@ -48,21 +49,51 @@ public class Board
                 if (c == Cols - 1)
                 {
                     Console.Write("|");
-                    // Find how many columns we used
                     int endCursor = Console.CursorLeft;
                     int length = endCursor - startCursor;
-
-                    // Move to the next line
+                    
                     Console.WriteLine();
-
-                    // Write a line of dashes of the same length
+                    
                     Console.WriteLine(new string('-', length));
                 }
             }
         }
     }
+    
+    private BoardStatus CheckStatus()
+    {
+        if (Has4Consecutive(CellValue.Red))
+        {
+            return new BoardStatus
+            {
+                Status = Status.Player1Won,
+                Cells = Cells
+            };
+        }
+        
+        if (Has4Consecutive(CellValue.Blue))
+        {
+            return new BoardStatus
+            {
+                Status = Status.Player2Won,
+                Cells = Cells
+            };
+        }
 
-    public bool Has4Consecutive(CellValue cellValue)
+        return AnyCellEmpty()
+            ? new BoardStatus
+            {
+                Status = Status.InProgress,
+                Cells = Cells
+            }
+            : new BoardStatus
+            {
+                Status = Status.Draw,
+                Cells = Cells
+            };
+    }
+
+    private bool Has4Consecutive(CellValue cellValue)
     {
         for (int line = 0; line < Rows; line++)
         {
@@ -88,7 +119,7 @@ public class Board
         return false;
     }
     
-    public bool AnyCellEmpty()
+    private bool AnyCellEmpty()
     {
         for (int i = 0; i < Rows; i++)
         {
