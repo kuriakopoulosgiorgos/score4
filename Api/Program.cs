@@ -1,4 +1,6 @@
 using Application;
+using GrainInterfaces.Configuration;
+using score4.Games;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +13,12 @@ builder.Services
 builder.Services.AddOpenApi();
 
 builder.Host
-    .AddApplication()
-    .UseOrleans(static siloBuilder =>
-{
-    siloBuilder.UseLocalhostClustering();
-});
+    .UseOrleans(siloBuilder =>
+    {
+        siloBuilder.UseLocalhostClustering();
+        siloBuilder.AddMemoryStreams(Streams.GameStream);
+        siloBuilder.AddMemoryGrainStorage("PubSubStore");
+    });
 
 var app = builder.Build();
 

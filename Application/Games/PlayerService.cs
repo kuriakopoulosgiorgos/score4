@@ -1,5 +1,4 @@
-﻿using Domain.Game;
-using GrainInterfaces.Game;
+﻿using GrainInterfaces.Games;
 
 namespace Application.Games;
 
@@ -17,11 +16,11 @@ public class PlayerService(IClusterClient client)
     public async Task JoinGameSession(Guid playerId, Guid gameSessionId)
     {
         IPlayerGrain playerGrain = client.GetGrain<IPlayerGrain>(playerId);
-        IGameSessionGrain gameSessionGrain = client.GetGrain<IGameSessionGrain>(gameSessionId);
-        await playerGrain.Join(gameSessionGrain);
+        IGameGrain gameGrainGrain = client.GetGrain<IGameGrain>(gameSessionId);
+        await playerGrain.Join(gameGrainGrain);
     }
 
-    public async Task<BoardStatus> Play(Guid playerId, int column)
+    public async Task<int> Play(Guid playerId, int column)
     {
         IPlayerGrain playerGrain = client.GetGrain<IPlayerGrain>(playerId);
         return await playerGrain.Play(column);

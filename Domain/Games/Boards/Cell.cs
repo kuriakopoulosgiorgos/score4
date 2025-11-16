@@ -1,4 +1,4 @@
-﻿namespace Domain.Game.Items;
+﻿namespace Domain.Games.Boards;
 
 public enum CellValue
 {

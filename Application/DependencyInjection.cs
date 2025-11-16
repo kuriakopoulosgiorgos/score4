@@ -1,4 +1,5 @@
 ﻿using Application.Games;
+using GrainInterfaces.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,14 +11,8 @@ public static class DependencyInjection
     {
         services.AddScoped<GameService>();
         services.AddScoped<PlayerService>();
-        return services;
-    }
+        services.AddSingleton<GameStreamObserver>();
 
-    public static IHostBuilder AddApplication(this IHostBuilder hostBuilder)
-    {
-        return hostBuilder.UseOrleansClient(static siloBuilder =>
-        {
-            siloBuilder.UseLocalhostClustering();
-        });
+        return services;
     }
 }

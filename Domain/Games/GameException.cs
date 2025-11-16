@@ -1,3 +1,3 @@
-﻿namespace Domain.Game;
+﻿namespace Domain.Games;
 
 public class GameException(string message) : Exception(message);
