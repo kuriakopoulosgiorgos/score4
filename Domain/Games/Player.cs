@@ -1,3 +1,3 @@
-﻿namespace Domain.Game;
+﻿namespace Domain.Games;
 
 public record Player(string Id, string Name);

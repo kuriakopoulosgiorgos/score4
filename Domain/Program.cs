@@ -1,38 +1,43 @@
-﻿using Domain.Game;
-using Domain.Game.Items;
+﻿using Domain.Games;
+using Domain.Games.Boards;
 
 int selection;
-GameSession gameSession = new GameSession
+Game game = new Game
 {
     SessionId = "1",
 };
 
-gameSession.Join(
-    new Player
-    (
-        Id: "1",
-        Name: "Geo"
-    )
+Player player1 = new
+(
+    Id: "1",
+    Name: "Player 1"
 );
 
-gameSession.Join(
-    new Player
-    (
-        Id: "2",
-        Name: "Jo"
-    )
+Player player2 = new
+(
+    Id: "2",
+    Name: "Player 2"
 );
 
-BoardStatus boardStatus = new BoardStatus
+Player playerPlaying = player1;
+BoardStatus boardStatus = BoardStatus.AvailableMoves;
+GameStatus gameStatus = GameStatus.WaitingPlayersToJoin;
+Cell[,] cells =  new Cell[Board.Rows, Board.Cols];
+game.GameUpdated += (sender, gameUpdate) =>
 {
-    Cells = new Cell[1, 1],
-    Status = Status.InProgress
+    playerPlaying = gameUpdate.PlayerPlaying ?? playerPlaying;
+    boardStatus = gameUpdate.BoardStatus;
+    gameStatus = gameUpdate.GameStatus;
+    cells = gameUpdate.Cells;
 };
+
+game.Join(player1);
+game.Join(player2);
 
 do
 {
-    gameSession.PrintBoard();
-    Console.WriteLine($"Payer playing: {gameSession.GetPlayerPlaying()?.Name}");
+    PrintCells(cells);
+    Console.WriteLine($"Player playing: {playerPlaying?.Name ?? ""}");
     Console.WriteLine($"To insert value to a cell press: 1");
     Console.WriteLine($"Press any other key to exit");
     if (!int.TryParse(Console.ReadLine(), out selection))
@@ -57,8 +62,8 @@ do
 
         try
         {
-            boardStatus = gameSession.PlaceCell(column);
-            Console.WriteLine($"Status: {nameof(boardStatus.Status)}: {boardStatus.Status}");
+            game.PlaceCell(playerPlaying, column);
+            Console.WriteLine($"Status: {nameof(gameStatus)}: {gameStatus}");
         }
         catch (GameException e)
         {
@@ -68,7 +73,30 @@ do
         
         
     }
-} while (selection == 1 && Status.InProgress == boardStatus.Status);
+} while (selection == 1 && GameStatus.Playing == gameStatus);
 
-gameSession.PrintBoard();
+PrintCells(cells);
+Console.WriteLine($"Board status: {boardStatus}");
 Console.WriteLine("Exiting...");
+
+static void PrintCells(Cell[,] cells)
+{
+    for (int r = Board.Rows - 1 ; r >= 0; r--)
+    {
+        int startCursor = Console.CursorLeft;
+        for (int c = 0; c < Board.Cols; c++)
+        {
+            Console.Write($"|\t{(int) cells[r, c].Value}\t");
+            if (c == Board.Cols - 1)
+            {
+                Console.Write("|");
+                int endCursor = Console.CursorLeft;
+                int length = endCursor - startCursor;
+                    
+                Console.WriteLine();
+                    
+                Console.WriteLine(new string('-', length));
+            }
+        }
+    }
+}

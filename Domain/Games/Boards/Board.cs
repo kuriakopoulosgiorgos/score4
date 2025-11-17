@@ -1,10 +1,10 @@
-﻿namespace Domain.Game.Items;
+﻿namespace Domain.Games.Boards;
 
 public class Board
 {
     public const int Rows = 6, Cols = 7;
 
-    private Cell[,] Cells => _cells.Clone() as Cell[,] ?? new Cell[Rows, Cols];
+    public Cell[,] Cells => _cells.Clone() as Cell[,] ?? new Cell[Rows, Cols];
     private readonly Cell[,] _cells = new Cell[Rows, Cols];
 
     public Board()
@@ -21,7 +21,7 @@ public class Board
         }
     }
 
-    public BoardStatus PlaceCell(int column, CellValue cellValue)
+    public int PlaceCell(int column, CellValue cellValue)
     {
         var cellYPosition = 0;
         while (cellYPosition < Rows && GetCellValue(cellYPosition, column) != CellValue.Empty)
@@ -35,62 +35,22 @@ public class Board
         }
         
         _cells[cellYPosition, column].Value = cellValue;
-        return CheckStatus();
-    }
-
-    public void PrintBoard()
-    {
-        for (int r = Rows - 1 ; r >= 0; r--)
-        {
-            int startCursor = Console.CursorLeft;
-            for (int c = 0; c < Cols; c++)
-            {
-                Console.Write($"|\t{(int) _cells[r, c].Value}\t");
-                if (c == Cols - 1)
-                {
-                    Console.Write("|");
-                    int endCursor = Console.CursorLeft;
-                    int length = endCursor - startCursor;
-                    
-                    Console.WriteLine();
-                    
-                    Console.WriteLine(new string('-', length));
-                }
-            }
-        }
+        return cellYPosition;
     }
     
-    private BoardStatus CheckStatus()
+    public BoardStatus CheckStatus()
     {
         if (Has4Consecutive(CellValue.Red))
         {
-            return new BoardStatus
-            {
-                Status = Status.Player1Won,
-                Cells = Cells
-            };
+            return BoardStatus.Player1Won;
         }
         
         if (Has4Consecutive(CellValue.Blue))
         {
-            return new BoardStatus
-            {
-                Status = Status.Player2Won,
-                Cells = Cells
-            };
+            return BoardStatus.Player2Won;
         }
 
-        return AnyCellEmpty()
-            ? new BoardStatus
-            {
-                Status = Status.InProgress,
-                Cells = Cells
-            }
-            : new BoardStatus
-            {
-                Status = Status.Draw,
-                Cells = Cells
-            };
+        return AnyCellEmpty() ? BoardStatus.AvailableMoves : BoardStatus.Draw;
     }
 
     private bool Has4Consecutive(CellValue cellValue)
