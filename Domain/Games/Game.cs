@@ -2,7 +2,6 @@
 
 namespace Domain.Games;
 
-[Serializable]
 public class Game
 {
     public required string SessionId { get; init; }
@@ -10,11 +9,26 @@ public class Game
     private Player? Player1 { get; set; }
     private Player? Player2 { get; set;  }
     private Player? _playerPlaying;
+    private bool _isOpen;
     
     public event EventHandler<GameUpdate>? GameUpdated;
 
+    public void Open()
+    {
+        if (_isOpen)
+        {
+            throw new GameException("Game already opened");
+        }
+        _isOpen = true;
+    }
+
     public void Join(Player player)
     {
+        if (!_isOpen)
+        {
+            throw new GameException("Game is not open");
+        }
+        
         if (Player1 is not null && Player2 is not null)
         {
             throw new GameException("Game session is full");
@@ -48,6 +62,10 @@ public class Game
 
     public int PlaceCell(Player player, int column)
     {
+        if (_board.CheckStatus() != BoardStatus.AvailableMoves)
+        {
+            throw new GameException("Game is finished");
+        }
         if (_playerPlaying is null)
         {
             throw new GameException("Game is not started");

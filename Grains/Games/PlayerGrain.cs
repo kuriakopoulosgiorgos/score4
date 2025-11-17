@@ -1,5 +1,4 @@
 ﻿using Domain.Games;
-using GrainInterfaces;
 using GrainInterfaces.Games;
 
 namespace Grains.Games;
@@ -20,14 +19,13 @@ public class PlayerGrain : Grain, IPlayerGrain
         return Task.CompletedTask;
     }
 
-    public Task Join(IGameGrain gameGrainGrain)
+    public async Task Join(IGameGrain gameGrainGrain)
     {
         _gameGrain = gameGrainGrain;
-        _gameGrain.Join(_playerDto);
-        return Task.CompletedTask;
+        await _gameGrain.Join(_playerDto);
     }
 
-    public async Task<int> Play(int column)
+    public async Task<int> PlaceCell(int column)
     {
         if (_gameGrain is null)
         {

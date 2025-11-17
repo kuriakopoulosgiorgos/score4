@@ -1,26 +1,18 @@
-using Application.Games;
+using Application.Games.CreateGame;
 using Microsoft.AspNetCore.Mvc;
 
 namespace score4.Games;
 
 [ApiController]
 [Route("api/v1/games")]
-public class GameController(
-    GameService gameService
-) : ControllerBase
+public class GameController : ControllerBase
 {
   
     [HttpPost]
-    [Route("{playerId:guid}")]
-    public async Task<Guid> CreateGameSession([FromRoute] Guid playerId)
+    public async Task<CreateGameResponse> CreateGame(
+        [FromServices] CreateGameHandler handler,
+        [FromBody] CreateGameRequest request)
     {
-        return await gameService.CreateGameSession(playerId);
-    }
-    
-    [HttpPost]
-    [Route("subscribe/{gameId:guid}")]
-    public async Task Subscribe(Guid gameId, CancellationToken cancellationToken)
-    {
-        await gameService.Subscribe(gameId, cancellationToken); 
+        return await handler.Handle(request);
     }
 }

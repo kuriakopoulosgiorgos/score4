@@ -1,5 +1,6 @@
 ﻿using Domain.Games.Boards;
 using GrainInterfaces.Games;
+using Newtonsoft.Json;
 using Orleans.Streams;
 
 namespace Application.Games;
@@ -8,10 +9,11 @@ public class GameStreamObserver : IAsyncObserver<GameUpdateDto>
 {
     public Task OnNextAsync(GameUpdateDto gameUpdate, StreamSequenceToken? token = null)
     {
-        Console.WriteLine($"Player playing: {gameUpdate.PlayerPlaying?.Name}");
+        Console.WriteLine($"Player playing: {gameUpdate.PlayerPlaying?.Id} {gameUpdate.PlayerPlaying?.Name}");
         Console.WriteLine($"Game Status: {gameUpdate.GameStatus}");
         Console.WriteLine($"Board Status: {gameUpdate.BoardStatus}");
         PrintCells(gameUpdate.Cells);
+        Console.WriteLine(JsonConvert.SerializeObject(gameUpdate));
         return Task.CompletedTask;
     }
 

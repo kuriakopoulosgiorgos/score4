@@ -1,33 +1,38 @@
-using Application.Games;
+using Application.Games.CreatePlayer;
+using Application.Games.JoinGame;
+using Application.Games.PlaceCell;
 using Microsoft.AspNetCore.Mvc;
 
 namespace score4.Games;
 
 [ApiController]
 [Route("/api/v1/players")]
-public class PlayerController(
-    PlayerService playerService
-) : ControllerBase
+public class PlayerController : ControllerBase
 {
   
     [HttpPost]
-    [Route("{name}")]
-    public async Task<Guid> CreatePlayer([FromRoute] string name)
+    public async Task<CreatePlayerResponse> CreatePlayer(
+        [FromServices] CreatePlayerHandler handler,
+        [FromBody] CreatePlayerRequest request)
     {
-        return await playerService.CreatePlayer(name);
+        return await handler.Handle(request);
     }
     
     [HttpPost]
-    [Route("{playerId:guid}/join/{gameSessionId:guid}")]
-    public async Task JoinGameSession(Guid playerId, Guid gameSessionId)
+    [Route("joinGame")]
+    public async Task<JoinGameResponse> JoinGame(
+        [FromServices] JoinGameHandler handler,
+        [FromBody] JoinGameRequest request)
     {
-        await playerService.JoinGameSession(playerId, gameSessionId);
+        return await handler.Handle(request);
     }
     
     [HttpPost]
-    [Route("{playerId:guid}/play/{column:int}")]
-    public async Task<int> Play(Guid playerId, int column)
+    [Route("placeCell")]
+    public async Task<PlaceCellResponse> Play(
+        [FromServices] PlaceCellHandler handler,
+        [FromBody] PlaceCellRequest request)
     {
-        return await playerService.Play(playerId, column);
+        return await handler.Handle(request);
     }
 }

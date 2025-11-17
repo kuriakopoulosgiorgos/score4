@@ -4,7 +4,6 @@ using GrainInterfaces.Games;
 using BoardStatus = GrainInterfaces.Games.BoardStatus;
 using CellValue = GrainInterfaces.Games.CellValue;
 using GameStatus = GrainInterfaces.Games.GameStatus;
-
 namespace Grains.Games;
 
 public static class GameUpdateExtensions
