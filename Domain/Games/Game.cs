@@ -4,7 +4,7 @@ namespace Domain.Games;
 
 public class Game
 {
-    public required string SessionId { get; init; }
+    public required string RoomName { get; init; }
     private readonly Board _board =  new ();
     private Player? Player1 { get; set; }
     private Player? Player2 { get; set;  }
@@ -39,6 +39,7 @@ public class Game
             Player1 =  player;
             OnGameUpdate(
                 new GameUpdate(
+                    RoomName: RoomName,
                     Cells: _board.Cells,
                     PlayerPlaying: null,
                     BoardStatus: BoardStatus.AvailableMoves,
@@ -52,6 +53,7 @@ public class Game
         _playerPlaying = Random.Shared.Next(1, 2) == 1 ? Player1 : Player2;
         OnGameUpdate(
             new GameUpdate(
+                RoomName: RoomName,
                 Cells: _board.Cells,
                 PlayerPlaying: _playerPlaying,
                 BoardStatus: BoardStatus.AvailableMoves,
@@ -81,6 +83,7 @@ public class Game
         BoardStatus boardStatus = _board.CheckStatus();
         OnGameUpdate(
             new GameUpdate(
+                RoomName: RoomName,
                 Cells: _board.Cells,
                 PlayerPlaying: _playerPlaying,
                 BoardStatus: boardStatus,

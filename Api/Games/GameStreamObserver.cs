@@ -1,11 +1,11 @@
 ﻿using Domain.Games.Boards;
 using GrainInterfaces.Games;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.SignalR;
 using Orleans.Streams;
 
-namespace Application.Games;
+namespace score4.Games;
 
-public class GameStreamObserver : IAsyncObserver<GameUpdateDto>
+public class GameStreamObserver(IHubContext<GameHub, IGameClient> hubContext) : IAsyncObserver<GameUpdateDto>
 {
     public Task OnNextAsync(GameUpdateDto gameUpdate, StreamSequenceToken? token = null)
     {
@@ -13,7 +13,7 @@ public class GameStreamObserver : IAsyncObserver<GameUpdateDto>
         Console.WriteLine($"Game Status: {gameUpdate.GameStatus}");
         Console.WriteLine($"Board Status: {gameUpdate.BoardStatus}");
         PrintCells(gameUpdate.Cells);
-        Console.WriteLine(JsonConvert.SerializeObject(gameUpdate));
+        hubContext.Clients.Group(gameUpdate.RoomName).OnGameUpdate(gameUpdate);
         return Task.CompletedTask;
     }
 

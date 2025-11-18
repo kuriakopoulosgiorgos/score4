@@ -30,6 +30,7 @@ public static class GameUpdateExtensions
             ) : null;
 
         return new GameUpdateDto(
+            RoomName: gameUpdate.RoomName,
             Cells: destination,
             PlayerPlaying: playerPlaying,
             BoardStatus: (BoardStatus) gameUpdate.BoardStatus,

@@ -1,5 +1,4 @@
-﻿using Application.Games;
-using Application.Games.CreateGame;
+﻿using Application.Games.CreateGame;
 using Application.Games.CreatePlayer;
 using Application.Games.JoinGame;
 using Application.Games.PlaceCell;
@@ -15,8 +14,6 @@ public static class DependencyInjection
         services.AddScoped<CreatePlayerHandler>();
         services.AddScoped<JoinGameHandler>();
         services.AddScoped<PlaceCellHandler>();
-        services.AddSingleton<GameStreamObserver>();
-        services.AddHostedService<GameStreamSubscriberHostService>();
         return services;
     }
 }

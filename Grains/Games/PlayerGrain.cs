@@ -10,7 +10,7 @@ public class PlayerGrain : Grain, IPlayerGrain
 
     public PlayerGrain()
     {
-        _playerDto = new PlayerDto(Id: this.GetPrimaryKeyString(), "Player");
+        _playerDto = new PlayerDto(Id: this.GetPrimaryKey(), "Player");
     }
     
     public Task SetName(string name)

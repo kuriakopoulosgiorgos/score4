@@ -4,18 +4,18 @@ using Domain.Games.Boards;
 int selection;
 Game game = new Game
 {
-    SessionId = "1",
+    RoomName = "1",
 };
 
 Player player1 = new
 (
-    Id: "1",
+    Id: Guid.NewGuid(),
     Name: "Player 1"
 );
 
 Player player2 = new
 (
-    Id: "2",
+    Id: Guid.NewGuid(),
     Name: "Player 2"
 );
 
@@ -30,6 +30,8 @@ game.GameUpdated += (sender, gameUpdate) =>
     gameStatus = gameUpdate.GameStatus;
     cells = gameUpdate.Cells;
 };
+
+game.Open();
 
 game.Join(player1);
 game.Join(player2);

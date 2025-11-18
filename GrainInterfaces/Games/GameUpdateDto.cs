@@ -29,6 +29,7 @@ public enum GameStatus
 [GenerateSerializer, Immutable]
 public record GameUpdateDto
 (
+    string RoomName,
     CellDto[,] Cells, 
     PlayerDto? PlayerPlaying, 
     BoardStatus BoardStatus,

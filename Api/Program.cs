@@ -1,6 +1,7 @@
 using Application;
 using GrainInterfaces.Configuration;
 using score4;
+using score4.Games;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,9 @@ builder.Services
     .AddApplication()
     .AddControllers();
 
+builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
+builder.Services.AddSingleton<GameStreamObserver>();
+builder.Services.AddHostedService<GameStreamSubscriberHostService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -37,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<GameHub>("/gameHub");
 
 app.UseExceptionHandler();
 

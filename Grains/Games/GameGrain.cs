@@ -12,7 +12,7 @@ public class GameGrain : Grain, IGameGrain
     {
         _game = new Game()
         {
-            SessionId = this.GetPrimaryKeyString(),
+            RoomName = this.GetPrimaryKeyString(),
         };
 
         var streamProvider = this.GetStreamProvider(Streams.GameStream);

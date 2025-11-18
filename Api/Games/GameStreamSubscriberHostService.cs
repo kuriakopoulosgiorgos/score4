@@ -1,8 +1,7 @@
 ﻿using GrainInterfaces.Configuration;
 using GrainInterfaces.Games;
-using Microsoft.Extensions.Hosting;
 
-namespace Application.Games;
+namespace score4.Games;
 
 public class GameStreamSubscriberHostService(
     IClusterClient clusterClient,
