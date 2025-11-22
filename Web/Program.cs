@@ -1,6 +1,7 @@
 using Application;
 using GrainInterfaces.Configuration;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.FileProviders;
 using score4;
 using score4.Games;
 
@@ -44,7 +45,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "src")
+    ),
+    RequestPath = "" // optional, serve at root URL
+});
 
 app.MapHub<GameHub>("/gameHub");
 
