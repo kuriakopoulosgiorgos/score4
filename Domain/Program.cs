@@ -9,13 +9,13 @@ Game game = new Game
 
 Player player1 = new
 (
-    Id: Guid.NewGuid(),
+    Id: Guid.NewGuid().ToString(),
     Name: "Player 1"
 );
 
 Player player2 = new
 (
-    Id: Guid.NewGuid(),
+    Id: Guid.NewGuid().ToString(),
     Name: "Player 2"
 );
 

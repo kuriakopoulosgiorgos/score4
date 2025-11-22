@@ -6,9 +6,8 @@ public class CreatePlayerHandler(IClusterClient client)
 {
     public async Task<CreatePlayerResponse> Handle(CreatePlayerRequest request)
     {
-        Guid guid = Guid.NewGuid();
-        IPlayerGrain playerGrain = client.GetGrain<IPlayerGrain>(guid);
+        IPlayerGrain playerGrain = client.GetGrain<IPlayerGrain>(request.PlayerId);
         await playerGrain.SetName(request.Name);
-        return new CreatePlayerResponse(guid);
+        return new CreatePlayerResponse(request.PlayerId);
     }
 }

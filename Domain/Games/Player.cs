@@ -1,3 +1,3 @@
 ﻿namespace Domain.Games;
 
-public record Player(Guid Id, string Name);
+public record Player(string Id, string Name);

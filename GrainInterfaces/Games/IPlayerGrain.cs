@@ -1,7 +1,7 @@
 ﻿namespace GrainInterfaces.Games;
 
 [Alias("GrainInterfaces.Games.IPlayerGrain")]
-public interface IPlayerGrain : IGrainWithGuidKey
+public interface IPlayerGrain : IGrainWithStringKey
 {
     Task SetName(string name);
     Task Join(IGameGrain gameGrain);

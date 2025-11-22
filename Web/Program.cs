@@ -1,5 +1,6 @@
 using Application;
 using GrainInterfaces.Configuration;
+using Microsoft.AspNetCore.SignalR;
 using score4;
 using score4.Games;
 
@@ -19,10 +20,11 @@ builder.Services
     .AddApplication()
     .AddControllers();
 
-builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
+builder.Services.AddSignalR(o =>
+        o.AddFilter<ExceptionFilter>())
+    .AddNewtonsoftJsonProtocol();
 builder.Services.AddSingleton<GameStreamObserver>();
 builder.Services.AddHostedService<GameStreamSubscriberHostService>();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -42,8 +44,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<GameHub>("/gameHub");
+app.UseStaticFiles();
 
-app.UseExceptionHandler();
+app.MapHub<GameHub>("/gameHub");
 
 app.Run();

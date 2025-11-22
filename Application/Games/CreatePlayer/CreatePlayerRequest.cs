@@ -1,3 +1,3 @@
 ﻿namespace Application.Games.CreatePlayer;
 
-public record CreatePlayerRequest(string Name);
+public record CreatePlayerRequest(string PlayerId, string Name);

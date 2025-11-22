@@ -1,3 +1,3 @@
 ﻿namespace Application.Games.CreateGame;
 
-public record CreateGameRequest(Guid PlayerId, string RoomName);
+public record CreateGameRequest(string PlayerId, string RoomName);

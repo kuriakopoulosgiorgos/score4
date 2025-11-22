@@ -1,3 +1,3 @@
 ﻿namespace Application.Games.PlaceCell;
 
-public record PlaceCellRequest(Guid PlayerId, int Column);
+public record PlaceCellRequest(string PlayerId, int Column);

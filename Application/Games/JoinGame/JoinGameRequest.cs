@@ -1,3 +1,3 @@
 ﻿namespace Application.Games.JoinGame;
 
-public record JoinGameRequest(Guid PlayerId, string RoomName);
+public record JoinGameRequest(string PlayerId, string RoomName);
