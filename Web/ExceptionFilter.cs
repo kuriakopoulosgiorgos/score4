@@ -20,7 +20,6 @@ public class ExceptionFilter : IHubFilter
             if (ex is GameException && hub is not null)
             {
                 await hub.Clients.Caller.OnGameException(ex.Message);
-                return null;
             }
             throw;
         }

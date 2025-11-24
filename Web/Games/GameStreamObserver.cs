@@ -13,7 +13,7 @@ public class GameStreamObserver(IHubContext<GameHub, IGameClient> hubContext) : 
         Console.WriteLine($"Game Status: {gameUpdate.GameStatus}");
         Console.WriteLine($"Board Status: {gameUpdate.BoardStatus}");
         PrintCells(gameUpdate.Cells);
-        hubContext.Clients.Group(gameUpdate.RoomName).OnGameUpdate(gameUpdate);
+        hubContext.Clients.Group(gameUpdate.RoomName).OnGameUpdated(gameUpdate);
         return Task.CompletedTask;
     }
 

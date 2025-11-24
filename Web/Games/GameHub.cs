@@ -2,6 +2,7 @@
 using Application.Games.CreatePlayer;
 using Application.Games.JoinGame;
 using Application.Games.PlaceCell;
+using GrainInterfaces.Games;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,11 +10,12 @@ namespace score4.Games;
 
 public class GameHub() : Hub<IGameClient>
 {
-    public async Task CreatePlayer(
+    public async Task<PlayerDto> CreatePlayer(
         [FromServices] CreatePlayerHandler handler,
         string name)
     {
-        await handler.Handle(new CreatePlayerRequest(Context.ConnectionId, name));
+        CreatePlayerResponse createPlayerResponse = await handler.Handle(new CreatePlayerRequest(Context.ConnectionId, name));
+        return new PlayerDto(createPlayerResponse.PlayerId, name);
     }
     
     public async Task JoinGame(
