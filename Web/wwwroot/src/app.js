@@ -1,10 +1,10 @@
 import { signalR } from './libs/signalR.js';
 import './players/CreatePlayer.js';
 import './games/CreateJoinGame.js';
-import './board/Board.js';
+import './boards/Board.js';
 
 const template = document.createElement('template');
-template.innerHTML = /*html*/`
+template.innerHTML = `
     <div id="outlet"></div>
 
     <template id="connectingTemplate">
@@ -26,8 +26,6 @@ template.innerHTML = /*html*/`
         <x-board></x-board>
     </template>
 
-    <x-board></x-board>
-
     <div id="errorToast"  class="toast align-items-center text-bg-danger position-absolute bottom-0 end-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
             <div id="errorMessage" class="toast-body">
@@ -38,19 +36,25 @@ template.innerHTML = /*html*/`
 `;
 
 export class App extends HTMLElement {
+    
+    #renderTemplate = 'connectingTemplate';
 
     constructor() {
         super();
         this.replaceChildren(template.content.cloneNode(true));
     }
+    
+    set renderTemplate(renderTemplate) {
+        this.#renderTemplate = renderTemplate;
+        this.render();
+    }
 
     connectedCallback() {
-        this.renderTemplate = 'connectingTemplate';
         this.render();
     }
 
     render() {
-        const renderTemplate = this.querySelector(`#${this.renderTemplate}`).content.cloneNode(true);
+        const renderTemplate = this.querySelector(`#${this.#renderTemplate}`).content.cloneNode(true);
         this.querySelector("#outlet").replaceChildren(renderTemplate);
     }
 
@@ -69,7 +73,6 @@ const appComponent = document.querySelector('#app');
 
 window.addEventListener("onConnected", () => {
     appComponent.renderTemplate = 'createPlayerTemplate';
-    appComponent.render();
 });
 
 window.addEventListener("onPlayerCreate", async (onPlayerCreateEvent) => {
@@ -110,7 +113,6 @@ async function createPlayer(playerName) {
         let player = await connection.invoke("CreatePlayer", playerName);
         console.log(player);
         appComponent.renderTemplate = 'createJoinGameTemplate';
-        appComponent.render();
     } catch (err) {
         console.error(err);
     }
@@ -120,7 +122,6 @@ async function createJoinGame(roomName, method) {
     try {
         await connection.invoke(method, roomName);
         appComponent.renderTemplate = 'boardTemplate';
-        appComponent.render();
     } catch (err) {
         console.error(err);
     }
@@ -138,4 +139,4 @@ connection.on("OnGameUpdated", async (gameUpdated) => {
     console.log(gameUpdated)
 });
 
-start();
+await start();
