@@ -52,6 +52,13 @@ export class App extends HTMLElement {
     connectedCallback() {
         this.render();
     }
+    
+    get boardComponent() {
+        if (this.#renderTemplate !== 'boardTemplate') {
+            return null;
+        }
+        return this.querySelector('x-board');
+    }
 
     render() {
         const renderTemplate = this.querySelector(`#${this.#renderTemplate}`).content.cloneNode(true);
@@ -70,6 +77,7 @@ export class App extends HTMLElement {
 customElements.define('x-app', App);
 
 const appComponent = document.querySelector('#app');
+let player = null;
 
 window.addEventListener("onConnected", () => {
     appComponent.renderTemplate = 'createPlayerTemplate';
@@ -87,8 +95,8 @@ window.addEventListener("onJoinGame", async (onJoinGameEvent) => {
     await createJoinGame(onJoinGameEvent.detail.roomName, "JoinGame");
 });
 
-window.addEventListener("onGameCreatedJoined", () => {
-    // Change view to Board, initialize the board to empty cells
+window.addEventListener("onPlaceCell", async (onPlaceCellEvent) => {
+    await placeCell(onPlaceCellEvent.detail.column);
 });
 
 const connection = new signalR.HubConnectionBuilder()
@@ -110,8 +118,7 @@ async function start() {
 
 async function createPlayer(playerName) {
     try {
-        let player = await connection.invoke("CreatePlayer", playerName);
-        console.log(player);
+        player = await connection.invoke("CreatePlayer", playerName);
         appComponent.renderTemplate = 'createJoinGameTemplate';
     } catch (err) {
         console.error(err);
@@ -122,10 +129,19 @@ async function createJoinGame(roomName, method) {
     try {
         await connection.invoke(method, roomName);
         appComponent.renderTemplate = 'boardTemplate';
+        appComponent.boardComponent.player = player;
     } catch (err) {
         console.error(err);
     }
-};
+}
+
+async function placeCell(column) {
+    try {
+        await connection.invoke("PlaceCell", column);
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 connection.onclose(async () => {
     await start();
@@ -136,7 +152,14 @@ connection.on("OnGameException", async (errorMessage) => {
 });
 
 connection.on("OnGameUpdated", async (gameUpdated) => {
-    console.log(gameUpdated)
+    console.log(gameUpdated);
+    document.dispatchEvent(
+        new CustomEvent('OnGameUpdated', {
+            detail: gameUpdated,
+            bubbles: true,
+            composed: true
+        })
+    );
 });
 
 await start();
