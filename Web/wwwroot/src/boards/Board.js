@@ -1,12 +1,18 @@
-import './cells/Cell';
+import './cells/Cell.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
     <div class="row">
-        <div class="container-fluid col-lg-8 p-0">
+        <div class="container-fluid col-lg-7 p-0">
             <div class="card bg-body-tertiary">
                 <div class="card-header">Player Playing: <span id="boardPlayerPlaying"/></div>
                 <div class="card-body">
+                    <h4>Score</h4>
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button id="playerOneScore" type="button" class="btn btn-primary"></button>
+                        <button id="playerTwoScore" type="button" class="btn btn-danger"></button>
+                    </div>
+                    <hr/>
                     <h5 class="card-title">Game Status: <span id="boardGameStatus"/></h5>
                     <p class="card-text">Board Status: <span id="boardBoardStatus"/></p>
                 </div>
@@ -15,9 +21,23 @@ template.innerHTML = `
     </div>
     
     <div class="row">
-        <div class="container-fluid col-lg-8">    
+        <div class="container-fluid col-lg-7">    
             <div id="board" class="shadow-lg bg-body-tertiary rounded">
 
+            </div>
+        </div>
+    </div>
+    
+    <div id="roundFinishedModal" class="modal fade" aria-labelledby="roundFinishedModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="roundFinishedModal">Round Finished</h1>
+                </div>
+                <div class="modal-footer">                    
+                    <button id="playAgainSubmitButton" type="button" class="btn btn-primary">Play Again</button>
+                    <button id="exitGameSubmitButton" type="button" class="btn btn-danger" data-bs-dismiss="modal">Exit Game</button>
+                </div>
             </div>
         </div>
     </div>
@@ -27,6 +47,8 @@ export class Board extends HTMLElement {
     
     #player = null;
     #gameUpdate = {
+        "playerOneScore": 0,
+        "playerTwoScore": 0,
         "roomName": "",
         "cells": [
             [
@@ -196,13 +218,13 @@ export class Board extends HTMLElement {
     
     render() {
         this.replaceChildren(template.content.cloneNode(true));
-        console.log("Player playing");
-        console.log(this.#gameUpdate.playerPlaying?.name);
         const boardPlayerPlaying = this.querySelector("#boardPlayerPlaying");
         boardPlayerPlaying.textContent = this.#gameUpdate.playerPlaying?.name;
         if (this.yourTurn){
-            boardPlayerPlaying.innerHTML += ' <b>Your Turn</b>';
+            boardPlayerPlaying.innerHTML += ' <span class="badge rounded-pill text-bg-success">Your Turn</span>';
         }
+        this.querySelector("#playerOneScore").textContent = this.#gameUpdate.playerOneScore;
+        this.querySelector("#playerTwoScore").textContent = this.#gameUpdate.playerTwoScore;
         this.querySelector("#boardGameStatus").textContent = this.gameStatus;
         this.querySelector("#boardBoardStatus").textContent = this.boardStatus;
         this.querySelector("#board");
@@ -232,9 +254,19 @@ export class Board extends HTMLElement {
             .forEach(cell =>
             {
                 cell.addEventListener('click', this.onCellClick.bind(this));
-                cell.addEventListener('mouseenter', this.onCellHoverIn.bind(this));
-                cell.addEventListener('mouseleave', this.onCellHoverOut.bind(this));
             });
+
+        let roundFinishedModal = bootstrap.Modal.getOrCreateInstance(this.querySelector("#roundFinishedModal"), {backdrop: false});
+        roundFinishedModal.hide();
+       
+        if (this.gameStatus === 'Finished'){
+            roundFinishedModal.show();
+            const playAgainSubmitButton = this.querySelector('#playAgainSubmitButton');
+            playAgainSubmitButton.addEventListener('click', this.onPlayAgainClick.bind(this));
+            const exitGameSubmitButton = this.querySelector('#exitGameSubmitButton');
+            exitGameSubmitButton.addEventListener('click', this.onExitGameClick.bind(this));
+        }
+
     }
 
     set gameUpdate(gameUpdate) {
@@ -273,14 +305,6 @@ export class Board extends HTMLElement {
         this.gameUpdate = gameUpdateEvent.detail;
     }
     
-    onCellHoverIn(cellHoverInEvent) {
-        
-    }
-
-    onCellHoverOut(cellHoverOutEvent) {
-        
-    }
-    
     onCellClick(cellClickEvent) {
         if (!this.yourTurn) {
             return;
@@ -289,6 +313,25 @@ export class Board extends HTMLElement {
         this.dispatchEvent(
             new CustomEvent('onPlaceCell', {
                 detail: { column: column },
+                bubbles: true,
+                composed: true
+            })
+        );
+    }
+
+    onPlayAgainClick() {
+        this.dispatchEvent(
+            new CustomEvent('onPlayAgain', {
+                detail: { roomName: this.#gameUpdate.roomName },
+                bubbles: true,
+                composed: true
+            })
+        );
+    }
+
+    onExitGameClick() {
+        this.dispatchEvent(
+            new CustomEvent('onExitGame', {
                 bubbles: true,
                 composed: true
             })

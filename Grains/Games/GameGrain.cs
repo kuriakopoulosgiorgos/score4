@@ -40,4 +40,16 @@ public class GameGrain : Grain, IGameGrain
     {
         return Task.FromResult(_game.PlaceCell(new Player(playerDto.Id, playerDto.Name), column));
     }
+
+    public Task PlayAgain()
+    {
+        _game.PlayAgain();
+        return Task.CompletedTask;
+    }
+    
+    public Task Exit(PlayerDto playerDto)
+    {
+        _game.Exit(new Player(playerDto.Id, playerDto.Name));
+        return Task.CompletedTask;
+    }
 }

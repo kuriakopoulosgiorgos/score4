@@ -99,6 +99,14 @@ window.addEventListener("onPlaceCell", async (onPlaceCellEvent) => {
     await placeCell(onPlaceCellEvent.detail.column);
 });
 
+window.addEventListener("onPlayAgain", async (onPlayAgainEvent) => {
+    await playAgain(onPlayAgainEvent.detail.roomName);
+});
+
+window.addEventListener("onExitGame", async (onExitGameEvent) => {
+    await exitGame();
+});
+
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("/gameHub")
     .withAutomaticReconnect()
@@ -138,6 +146,23 @@ async function createJoinGame(roomName, method) {
 async function placeCell(column) {
     try {
         await connection.invoke("PlaceCell", column);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function playAgain(roomName) {
+    try {
+        await connection.invoke("PlayAgain", roomName);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function exitGame() {
+    try {
+        await connection.invoke("Exit");
+        appComponent.renderTemplate = 'createJoinGameTemplate';
     } catch (err) {
         console.error(err);
     }

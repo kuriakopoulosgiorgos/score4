@@ -30,6 +30,8 @@ public static class GameUpdateExtensions
             ) : null;
 
         return new GameUpdateDto(
+            PlayerOneScore: gameUpdate.PlayerOneScore,
+            PlayerTwoScore: gameUpdate.PlayerTwoScore,
             RoomName: gameUpdate.RoomName,
             Cells: destination,
             PlayerPlaying: playerPlaying,

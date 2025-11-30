@@ -9,16 +9,7 @@ public class Board
 
     public Board()
     {
-        for (int r = 0; r < Rows; r++)
-        {
-            for (int c = 0; c < Cols; c++)
-            {
-                _cells[r, c] = new Cell
-                {
-                    Value = CellValue.Empty
-                };
-            }
-        }
+        Reset();
     }
 
     public int PlaceCell(int column, CellValue cellValue)
@@ -51,6 +42,20 @@ public class Board
         }
 
         return AnyCellEmpty() ? BoardStatus.AvailableMoves : BoardStatus.Draw;
+    }
+
+    public void Reset()
+    {
+        for (int r = 0; r < Rows; r++)
+        {
+            for (int c = 0; c < Cols; c++)
+            {
+                _cells[r, c] = new Cell
+                {
+                    Value = CellValue.Empty
+                };
+            }
+        }
     }
 
     private bool Has4Consecutive(CellValue cellValue)

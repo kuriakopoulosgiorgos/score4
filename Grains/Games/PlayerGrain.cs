@@ -33,4 +33,13 @@ public class PlayerGrain : Grain, IPlayerGrain
         }
         return await _gameGrain.PlaceCell(_playerDto, column);
     }
+    
+    public async Task Exit()
+    {
+        if (_gameGrain is null)
+        {
+            return;
+        }
+        await _gameGrain.Exit(_playerDto);
+    }
 }

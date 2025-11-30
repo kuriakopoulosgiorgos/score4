@@ -1,7 +1,9 @@
 ﻿using Application.Games.CreateGame;
 using Application.Games.CreatePlayer;
+using Application.Games.ExitGame;
 using Application.Games.JoinGame;
 using Application.Games.PlaceCell;
+using Application.Games.PlayAgain;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -14,6 +16,8 @@ public static class DependencyInjection
         services.AddScoped<CreatePlayerHandler>();
         services.AddScoped<JoinGameHandler>();
         services.AddScoped<PlaceCellHandler>();
+        services.AddScoped<PlayAgainHandler>();
+        services.AddScoped<ExitGameHandler>();
         return services;
     }
 }

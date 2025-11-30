@@ -2,8 +2,9 @@
 
 namespace Domain.Games;
 
-public record GameUpdate
-(
+public record GameUpdate(
+    int PlayerOneScore,
+    int PlayerTwoScore,
     string RoomName,
     Cell[,] Cells, 
     Player? PlayerPlaying, 
