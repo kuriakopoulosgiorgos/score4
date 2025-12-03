@@ -1,8 +1,9 @@
 ﻿import { defineConfig } from 'vite'
 
 export default defineConfig({
+    root: 'src',
     server: {
-        open: 'src/index.html',
+        open: 'index.html',
         proxy: {
             '/api': {
                 target: 'http://localhost:5278',

@@ -45,12 +45,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "src")
+    ),
+    RequestPath = ""
+});
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.WebRootPath, "src")
     ),
-    RequestPath = "" // optional, serve at root URL
+    RequestPath = ""
 });
 
 app.MapHub<GameHub>("/gameHub");

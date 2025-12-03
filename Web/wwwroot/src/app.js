@@ -103,12 +103,12 @@ window.addEventListener("onPlayAgain", async (onPlayAgainEvent) => {
     await playAgain(onPlayAgainEvent.detail.roomName);
 });
 
-window.addEventListener("onExitGame", async (onExitGameEvent) => {
+window.addEventListener("onExitGame", async (_) => {
     await exitGame();
 });
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/gameHub")
+    .withUrl("gameHub")
     .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Information)
     .build();
